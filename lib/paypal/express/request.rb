@@ -51,6 +51,25 @@ module Paypal
         Response.new response
       end
 
+      def capture!(authorization_id, options = {})
+        params = {
+          :AUTHORIZATIONID => authorization_id,
+          :AMT => Util.formatted_amount(options[:amount]),
+          :CURRENCYCODE => options[:currency_code],
+          :COMPLETETYPE => options[:complete_type] || :Complete
+        }
+        response = self.request :DoCapture, params
+        Response.new response
+      end
+
+      def void!(authorization_id, options = {})
+        params = {
+          :AUTHORIZATIONID => authorization_id
+        }
+        params[:NOTE] = options[:note] if options[:note]
+        response = self.request :DoVoid, params
+        Response.new response
+      end
 
       # Recurring Payment Specific
 
